@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<BWSharedResource>
+    <name>RMS</name>
+    <resourceType>ae.shared.JDBCSharedResource</resourceType>
+    <description>momb06x:jcptemp/jcptempdev1
+momb07x:mshettyrmsjcp1
+momb07x:mvopertco/jzB12lv</description>
+    <config>
+        <driver>tibcosoftwareinc.jdbc.oracle.OracleDriver</driver>
+        <maxConnections>10</maxConnections>
+        <loginTimeout>%%Connections/Database/RMS/DBTimeOut%%</loginTimeout>
+        <connectionType>JDBC</connectionType>
+        <UseSharedJndiConfig>false</UseSharedJndiConfig>
+        <location>%%Connections/Database/RMS/DBURL%%</location>
+        <user>%%Connections/Database/RMS/DBUser%%</user>
+        <password>%%Connections/Database/RMS/DBPassword%%</password>
+    </config>
+</BWSharedResource>

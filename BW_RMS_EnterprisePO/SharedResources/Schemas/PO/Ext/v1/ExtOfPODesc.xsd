@@ -1,0 +1,254 @@
+<xs:schema elementFormDefault="qualified"
+    targetNamespace="http://www.oracle.com/retail/integration/custom/bo/ExtOfPODesc/v1"
+    version="1.0"
+    xmlns="http://www.oracle.com/retail/integration/custom/bo/ExtOfPODesc/v1"
+    xmlns:retailDoc="http://www.w3.org/2001/XMLSchema" xmlns:xs="http://www.w3.org/2001/XMLSchema">
+    <xs:element name="ExtOfPOPackDtl">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element minOccurs="0" name="comp_item" type="varchar225">
+                </xs:element>
+                <xs:element minOccurs="0" name="comp_item_desc" type="varchar2250">
+                </xs:element>
+                <xs:element minOccurs="0" name="comp_item_legacy_sku" type="varchar225">
+                </xs:element>
+                <xs:element minOccurs="0" name="comp_item_upc" type="varchar225">
+                </xs:element>
+                <xs:element minOccurs="0" name="comp_unit_cost" type="number15">
+                </xs:element>     
+                <xs:element minOccurs="0" name="comp_unit_retail" type="number15">
+                </xs:element>     
+                <xs:element minOccurs="0" name="comp_qty" type="number15">
+                </xs:element>     
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="ExtOfPODtl">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element minOccurs="0" name="asn_date" type="varchar2250">
+                </xs:element>
+                <xs:element minOccurs="0" name="legacy_po_no" type="varchar2250">
+                </xs:element>
+                <xs:element minOccurs="0" name="bill_to_whse" type="number15">
+                </xs:element>
+                <xs:element minOccurs="0" name="ontime_shipdate" type="varchar2250">
+                </xs:element>
+                <xs:element minOccurs="0" name="ontime_canceldate" type="varchar2250">
+                </xs:element>
+                <xs:element minOccurs="0" name="ontime_limit_reached" type="varchar2250">
+                </xs:element>
+                <xs:element minOccurs="0" name="lpo_ship_dcd_date" type="varchar2250">
+                </xs:element>
+                <xs:element minOccurs="0" name="lpo_cancel_eta_date" type="varchar2250">
+                </xs:element>
+                <xs:element minOccurs="0" name="lpo_isd_ibd_date" type="varchar2250">
+                </xs:element>
+                <xs:element minOccurs="0" name="lpo_etr_date" type="varchar2250">
+                </xs:element>                
+                <xs:element minOccurs="0" name="factory_country_id" type="varchar2250">
+                </xs:element>
+                <xs:element minOccurs="0" name="factory_id" type="varchar2250">
+                </xs:element>
+                <xs:element minOccurs="0" name="factory_name" type="varchar2250">
+                </xs:element>
+                <xs:element minOccurs="0" name="future_cost_applied" type="varchar2250">
+                </xs:element>
+                <xs:element minOccurs="0" name="future_retail_applied" type="varchar2250">
+                </xs:element>
+                <xs:element minOccurs="0" name="hanger_no" type="varchar2250">
+                </xs:element>
+                <xs:element minOccurs="0" name="hanger_type" type="varchar2250">
+                </xs:element>
+                <xs:element minOccurs="0" name="legacy_sku" type="varchar2250">
+                </xs:element>
+                <xs:element minOccurs="0" name="ppk_no" type="varchar2250">
+                </xs:element>
+                <xs:element minOccurs="0" name="supp_pack_override" type="number15">
+                </xs:element>
+                <xs:element minOccurs="0" name="ship_dcd_dt" type="xs:dateTime">
+                </xs:element>   
+                <xs:element minOccurs="0" name="cancel_eta_dt" type="xs:dateTime">
+                </xs:element>   
+                <xs:element minOccurs="0" name="ibd_isd_dt" type="xs:dateTime">
+                </xs:element>   
+                <xs:element minOccurs="0" name="etr_dt" type="xs:dateTime">
+                </xs:element>       
+                <xs:element minOccurs="0" name="di_item_count" type="number15">
+                </xs:element>           
+                <xs:element minOccurs="0" name="di_location_type" type="varchar210">
+                </xs:element>       
+                <xs:element minOccurs="0" name="item_tolerance_qty" type="number15">
+                </xs:element>         
+                <xs:element minOccurs="0" name="item_desc" type="varchar2250">
+                </xs:element>      
+                <xs:element minOccurs="0" name="unit_retail" type="number15">
+                </xs:element>      
+                <xs:element minOccurs="0" name="upc" type="varchar225">
+                </xs:element>      
+                <xs:element minOccurs="0" name="brand_id" type="varchar2250">
+                </xs:element>      
+                <xs:element minOccurs="0" name="ai_no" type="varchar225">
+                </xs:element>      
+                <xs:element minOccurs="0" name="di_create_date" type="xs:dateTime">
+                </xs:element>   
+                <xs:element minOccurs="0" name="di_last_update_date" type="xs:dateTime">
+                </xs:element>   
+                <xs:element minOccurs="0" name="di_status" type="varchar2250">
+                </xs:element>       
+                <xs:element minOccurs="0" name="di_status_reason_code" type="varchar2250">
+                </xs:element>      
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="ExtOfPODesc">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element minOccurs="0" name="approved_date" type="varchar2250">
+                </xs:element>
+                <xs:element minOccurs="0" name="channel" type="varchar2250">
+                </xs:element>
+                <xs:element minOccurs="0" name="collab_status" type="varchar2250">
+                </xs:element>
+                <xs:element minOccurs="0" name="collab_status_date" type="varchar2250">
+                </xs:element>
+                <xs:element minOccurs="0" name="contract_no" type="number15">
+                </xs:element>
+                <xs:element minOccurs="0" name="dcd" type="varchar2250">
+                </xs:element>
+                <xs:element minOccurs="0" name="eta" type="varchar2250">
+                </xs:element>
+                <xs:element minOccurs="0" name="etr" type="varchar2250">
+                </xs:element>
+                <xs:element minOccurs="0" name="isd_ibd" type="varchar2250">
+                </xs:element>
+                <xs:element minOccurs="0" name="manufacturer_site" type="number15">
+                </xs:element>
+                <xs:element minOccurs="0" name="po_type" type="varchar2250">
+                </xs:element>
+                <xs:element minOccurs="0" name="supplier_site" type="number15">
+                </xs:element>
+                <xs:element minOccurs="0" name="system_origin" type="varchar2250">
+                </xs:element>
+                <xs:element minOccurs="0" name="warehouse_location" type="number15">
+                </xs:element>
+                <xs:element minOccurs="0" name="warehouse_no" type="number15">
+                </xs:element>
+                <xs:element minOccurs="0" name="control_office" type="varchar2250">
+                </xs:element>
+                <xs:element minOccurs="0" name="expedite_ind" type="varchar2250">
+                </xs:element>
+                <xs:element minOccurs="0" name="packing_ind" type="varchar2250">
+                </xs:element>
+                <xs:element minOccurs="0" name="port_of_origin" type="varchar2250">
+                </xs:element>
+                <xs:element minOccurs="0" name="sc_mgr" type="varchar2250">
+                </xs:element>
+                <xs:element minOccurs="0" name="shipping_ind" type="varchar2250">
+                </xs:element>
+                <xs:element minOccurs="0" name="sourcing_dir" type="varchar2250">
+                </xs:element>
+                <xs:element minOccurs="0" name="visibility_ind" type="varchar2250">
+                </xs:element>
+                <xs:element minOccurs="0" name="wh_class" type="varchar2250">
+                </xs:element>
+                <xs:element minOccurs="0" name="wh_processing_type" type="varchar2250">
+                </xs:element>
+                <xs:element minOccurs="0" name="created_by" type="varchar2250">
+                </xs:element>    
+                <xs:element minOccurs="0" name="denied_ind" type="varchar2250">
+                </xs:element>    
+                <xs:element minOccurs="0" name="denied_reason" type="varchar2250">
+                </xs:element>    
+                <xs:element minOccurs="0" name="floorset_store_flag" type="varchar2250">
+                </xs:element>    
+                <xs:element minOccurs="0" name="ibo_approved_by" type="varchar2250">
+                </xs:element>    
+                <xs:element minOccurs="0" name="ibo_merch_asst" type="varchar2250">
+                </xs:element>    
+                <xs:element minOccurs="0" name="ibo_submitted_by" type="varchar2250">
+                </xs:element>    
+                <xs:element minOccurs="0" name="location_status" type="varchar2250">
+                </xs:element>    
+                <xs:element minOccurs="0" name="mat_submitted_by" type="varchar2250">
+                </xs:element>    
+                <xs:element minOccurs="0" name="prev_apprv_ind" type="varchar2250">
+                </xs:element>  
+                <xs:element minOccurs="0" name="close_reason_cd" type="varchar2250">
+                </xs:element>      
+                <xs:element minOccurs="0" name="gohh_flag" type="varchar2250">
+                </xs:element>    
+                <xs:element minOccurs="0" name="last_modified_by" type="varchar2250">
+                </xs:element>    
+                <xs:element minOccurs="0" name="last_modified_date" type="varchar2250">
+                </xs:element>    
+                <xs:element minOccurs="0" name="otb_month" type="varchar2250">
+                </xs:element>    
+                <xs:element minOccurs="0" name="po_cancel_reason_cd" type="varchar2250">
+                </xs:element>    
+                <xs:element minOccurs="0" name="po_status_date" type="varchar2250">
+                </xs:element>    
+                <xs:element minOccurs="0" name="sub_for_apprv_date" type="varchar2250">
+                </xs:element>    
+                <xs:element minOccurs="0" name="supp_ack_date" type="varchar2250">
+                </xs:element>    
+                <xs:element minOccurs="0" name="version_no" type="varchar2250">
+                </xs:element>
+                <xs:element minOccurs="0" name="item_change_status_date" type="xs:dateTime">
+                </xs:element>
+                <xs:element minOccurs="0" name="mat_item_chng_stat_dt" type="xs:dateTime">
+                </xs:element>   
+                <xs:element minOccurs="0" name="po_total_cost" type="number15">
+                </xs:element>
+                <xs:element minOccurs="0" name="ref_order_no" type="number15">
+                </xs:element> 
+                <xs:element minOccurs="0" name="loc_status_date" type="varchar2250">
+                </xs:element>     
+                <xs:element minOccurs="0" name="ibo_item_chng_stat_dt" type="varchar2250">
+                </xs:element>     
+                <xs:element minOccurs="0" name="initial_ord_ind" type="varchar2250">
+                </xs:element>     
+                <xs:element minOccurs="0" name="design_calendar" type="varchar2250">
+                </xs:element>     
+                <xs:element minOccurs="0" name="ship_point" type="varchar2250">
+                </xs:element>     
+                <xs:element minOccurs="0" name="pomod_lock_code" type="varchar2250">
+                </xs:element>       
+                <xs:element minOccurs="0" name="collab_recall_ind" type="varchar2250">
+                </xs:element>     
+                <xs:element minOccurs="0" name="mat_item_change_ind" type="varchar2250">
+                </xs:element>     
+                <xs:element minOccurs="0" name="collb_prev_status" type="varchar2250">
+                </xs:element>  
+                <xs:element minOccurs="0" name="ibo_item_change_ind" type="varchar2250">
+                </xs:element>   
+                <xs:element minOccurs="0" name="parent_supplier" type="number15">
+                </xs:element>    
+                <xs:element minOccurs="0" name="parent_supplier_desc" type="varchar2250">
+                </xs:element>    
+                <xs:element minOccurs="0" name="supplier_site_desc" type="varchar2250">
+                </xs:element>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+    <xs:simpleType name="number15">
+        <xs:restriction base="xs:long">
+            <xs:totalDigits value="15"/>
+        </xs:restriction>
+    </xs:simpleType>
+    <xs:simpleType name="varchar225">
+        <xs:restriction base="xs:string">
+            <xs:maxLength value="25"/>
+        </xs:restriction>
+    </xs:simpleType>
+    <xs:simpleType name="varchar210">
+        <xs:restriction base="xs:string">
+            <xs:maxLength value="10"/>
+        </xs:restriction>
+    </xs:simpleType>
+    <xs:simpleType name="varchar2250">
+        <xs:restriction base="xs:string">
+            <xs:maxLength value="250"/>
+        </xs:restriction>
+    </xs:simpleType>
+</xs:schema>

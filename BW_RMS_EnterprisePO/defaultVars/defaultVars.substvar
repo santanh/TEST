@@ -1,0 +1,37 @@
+<?xml version = "1.0" encoding = "UTF-8"?>
+<repository xmlns:xsi = "http://www.w3.org/2001/XMLSchema-instance" xmlns = "http://www.tibco.com/xmlns/repo/types/2002">
+	<globalVariables>
+		<globalVariable>
+			<name>Deployment</name>
+			<value>BW_RMS_EnterprisePO</value>
+			<deploymentSettable>true</deploymentSettable>
+			<serviceSettable>false</serviceSettable>
+			<type>String</type>
+			<modTime>1252681147928</modTime>
+		</globalVariable>
+		<globalVariable>
+			<name>DirLedger</name>
+			<value>.</value>
+			<deploymentSettable>true</deploymentSettable>
+			<serviceSettable>false</serviceSettable>
+			<type>String</type>
+			<modTime>1252681147881</modTime>
+		</globalVariable>
+		<globalVariable>
+			<name>DirTrace</name>
+			<value>.</value>
+			<deploymentSettable>true</deploymentSettable>
+			<serviceSettable>false</serviceSettable>
+			<type>String</type>
+			<modTime>1252681147897</modTime>
+		</globalVariable>
+		<globalVariable>
+			<name>Domain</name>
+			<value>JCP</value>
+			<deploymentSettable>true</deploymentSettable>
+			<serviceSettable>false</serviceSettable>
+			<type>String</type>
+			<modTime>1252681147850</modTime>
+		</globalVariable>
+	</globalVariables>
+</repository>

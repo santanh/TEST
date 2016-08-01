@@ -1,0 +1,647 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<pd:ProcessDefinition xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:pfx="http://www.oracle.com/retail/integration/base/bo/PODesc/v1" xmlns:pd="http://xmlns.tibco.com/bw/process/2003" xmlns:pfx2="http://www.tibco.com/schemas/BW_RMS_PurchaseOrder/SharedResources/Schemas/Schema.xsd" xmlns:ns="http://www.oracle.com/retail/integration/custom/bo/ExtOfPODesc/v1" xmlns:ns12="www.tibco.com/plugin/Sleep" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:tib="http://www.tibco.com/bw/xslt/custom-functions" xmlns:ns2="http://www.tibco.com/pe/DeployedVarsType" xmlns:ns1="http://www.tibco.com/namespaces/tnt/plugins/file">
+    <xsd:import namespace="http://www.oracle.com/retail/integration/base/bo/PODesc/v1" schemaLocation="/SharedResources/Schemas/PO/PODesc.xsd"/>
+    <xsd:import namespace="http://www.tibco.com/schemas/BW_RMS_PurchaseOrder/SharedResources/Schemas/Schema.xsd" schemaLocation="/SharedResources/Schemas/SSCHCustomSchema.xsd"/>
+    <pd:name>Processes/SubProcesses/SSCH/SSCHMod.process</pd:name>
+    <pd:description>POHdrMod and PODTLMod</pd:description>
+    <pd:startName>Start</pd:startName>
+    <pd:startType>
+        <xsd:element name="group">
+            <xsd:complexType>
+                <xsd:sequence>
+                    <xsd:element ref="pfx2:Records"/>
+                    <xsd:element name="Message_Type" type="xsd:string"/>
+                </xsd:sequence>
+            </xsd:complexType>
+        </xsd:element>
+    </pd:startType>
+    <pd:startX>68</pd:startX>
+    <pd:startY>216</pd:startY>
+    <pd:returnBindings/>
+    <pd:endName>End</pd:endName>
+    <pd:endX>767</pd:endX>
+    <pd:endY>219</pd:endY>
+    <pd:errorSchemas/>
+    <pd:processVariables>
+        <Var>
+            <xsd:element name="root">
+                <xsd:complexType>
+                    <xsd:sequence>
+                        <xsd:element name="legacy_po_no" type="xsd:string" minOccurs="0" maxOccurs="unbounded"/>
+                    </xsd:sequence>
+                </xsd:complexType>
+            </xsd:element>
+        </Var>
+    </pd:processVariables>
+    <pd:targetNamespace>http://xmlns.example.com/1466407808513</pd:targetNamespace>
+    <pd:activity name="Append To File">
+        <pd:type>com.tibco.plugin.file.FileWriteActivity</pd:type>
+        <pd:resourceType>ae.activities.FileWriteActivity</pd:resourceType>
+        <pd:x>639</pd:x>
+        <pd:y>218</pd:y>
+        <config>
+            <encoding>text</encoding>
+            <compressFile>None</compressFile>
+            <createMissingDirectories>true</createMissingDirectories>
+            <append>true</append>
+        </config>
+        <pd:inputBindings>
+            <ns1:WriteActivityInputTextClass>
+                <fileName>
+                    <xsl:value-of select="$_globalVariables/ns2:GlobalVariables/PurchaseOrder/SSCHModOutputFileName"/>
+                </fileName>
+                <textContent>
+                    <xsl:value-of select="$SSCHOutput/root/SSCHString"/>
+                </textContent>
+            </ns1:WriteActivityInputTextClass>
+        </pd:inputBindings>
+    </pd:activity>
+    <pd:activity name="Render Order Header HdrMod">
+        <pd:type>com.tibco.plugin.cobol.CCBRenderActivity</pd:type>
+        <pd:resourceType>ae.activities.CCBRenderActivity</pd:resourceType>
+        <pd:description>Only Order Header Records</pd:description>
+        <pd:x>235</pd:x>
+        <pd:y>225</pd:y>
+        <config>
+            <encoding>ASCII</encoding>
+            <encodingDisp1>ASCII</encodingDisp1>
+            <bigEndian>true</bigEndian>
+            <multipleRecords>true</multipleRecords>
+            <delimiter>New Line</delimiter>
+            <fillerChars>Space</fillerChars>
+            <truncate>true</truncate>
+            <renderAs>string</renderAs>
+            <ae.palette.cobolpalette.sharedProperties.copybook>/SharedResources/Copybook/SSCH/DMSSSCPO-HEADER.cpy</ae.palette.cobolpalette.sharedProperties.copybook>
+        </config>
+        <pd:inputBindings>
+            <Input>
+                <DMSSSCPO-ORDER-HEADER>
+                    <DMSSSCPO-ORDER-RECORD-TYPE>
+                        <xsl:value-of select="&quot;030&quot;"/>
+                    </DMSSSCPO-ORDER-RECORD-TYPE>
+                    <DMSSSCPO-ACTION-TYPE>
+                        <xsl:value-of select="&quot;C&quot;"/>
+                    </DMSSSCPO-ACTION-TYPE>
+                    <DMSSSCPO-ALLOC-NBR>
+                        <xsl:value-of select="$Start/group/pfx2:Records/pfx2:Record[1]/ExtOfPODtl_legacy_po_no"/>
+                    </DMSSSCPO-ALLOC-NBR>
+                    <DMSSSCPO-STORE-NBR>
+                        <xsl:value-of select="$Start/group/pfx2:Records/pfx2:Record[1]/POVirtualDtl_location"/>
+                    </DMSSSCPO-STORE-NBR>
+                    <DMSSSCPO-TYPE-CODE>
+                        <xsl:value-of select="$Start/group/pfx2:Records/pfx2:Record[1]/ExtOfPODesc_shipping_ind"/>
+                    </DMSSSCPO-TYPE-CODE>
+                    <DMSSSCPO-BULK-NBR>
+                        <xsl:value-of select="$Start/group/pfx2:Records/pfx2:Record[1]/ExtOfPODtl_legacy_po_no"/>
+                    </DMSSSCPO-BULK-NBR>
+                    <xsl:if test="$Start/group/pfx2:Records/pfx2:Record[1]/ExtOfPODesc_parent_supplier">
+                        <DMSSSCPO-SUPPLIER-NBR>
+                            <xsl:value-of select="$Start/group/pfx2:Records/pfx2:Record[1]/ExtOfPODesc_parent_supplier"/>
+                        </DMSSSCPO-SUPPLIER-NBR>
+                    </xsl:if>
+                    <DMSSSCPO-ORDER-DATE>
+                        <xsl:value-of select="concat(tib:tokenize(substring($Start/group/pfx2:Records/pfx2:Record[1]/ExtOfPODesc_approved_date, 1, 10), &quot;/&quot;)[3],&#xA;tib:tokenize(substring($Start/group/pfx2:Records/pfx2:Record[1]/ExtOfPODesc_approved_date, 1, 10), &quot;/&quot;)[1],&#xA;tib:tokenize(substring($Start/group/pfx2:Records/pfx2:Record[1]/ExtOfPODesc_approved_date, 1, 10), &quot;/&quot;)[2])"/>
+                    </DMSSSCPO-ORDER-DATE>
+                    <DMSSSCPO-SHIP-DATE>
+                        <xsl:value-of select="concat(tib:tokenize(substring($Start/group/pfx2:Records/pfx2:Record[1]/ExtOfPODtl_ship_dcd_dt, 1, 10), &quot;/&quot;)[3],&#xA;tib:tokenize(substring($Start/group/pfx2:Records/pfx2:Record[1]/ExtOfPODtl_ship_dcd_dt, 1, 10), &quot;/&quot;)[1],&#xA;tib:tokenize(substring($Start/group/pfx2:Records/pfx2:Record[1]/ExtOfPODtl_ship_dcd_dt, 1, 10), &quot;/&quot;)[2])"/>
+                    </DMSSSCPO-SHIP-DATE>
+                    <DMSSSCPO-CANCEL-DATE>
+                        <xsl:value-of select="concat(tib:tokenize(substring($Start/group/pfx2:Records/pfx2:Record[1]/ExtOfPODtl_cancel_eta_dt, 1, 10), &quot;/&quot;)[3],&#xA;tib:tokenize(substring($Start/group/pfx2:Records/pfx2:Record[1]/ExtOfPODtl_cancel_eta_dt, 1, 10), &quot;/&quot;)[1],&#xA;tib:tokenize(substring($Start/group/pfx2:Records/pfx2:Record[1]/ExtOfPODtl_cancel_eta_dt, 1, 10), &quot;/&quot;)[2])"/>
+                    </DMSSSCPO-CANCEL-DATE>
+                    <DMSSSCPO-SSC-UNIT-SUB>
+                        <DMSSSCPO-SSC-UNIT-NBR>
+                            <xsl:value-of select="$Start/group/pfx2:Records/pfx2:Record[1]/PODtl_physical_location"/>
+                        </DMSSSCPO-SSC-UNIT-NBR>
+                        <DMSSSCPO-RPTG-SUB>
+                            <xsl:value-of select="$Start/group/pfx2:Records/pfx2:Record[1]/PODesc_dept"/>
+                        </DMSSSCPO-RPTG-SUB>
+                    </DMSSSCPO-SSC-UNIT-SUB>
+                    <DMSSSCPO-SOURCE-CODE>
+                        <xsl:value-of select="&quot;RMS&quot;"/>
+                    </DMSSSCPO-SOURCE-CODE>
+                    <DMSSSCPO-SUPPLIER-NAME>
+                        <xsl:value-of select="$Start/group/pfx2:Records/pfx2:Record[1]/ExtOfPODesc_parent_supplier_desc"/>
+                    </DMSSSCPO-SUPPLIER-NAME>
+                    <DMSSSCPO-ORD-SOURCE-CD>
+                        <xsl:value-of select="$Start/group/pfx2:Records/pfx2:Record[1]/ExtOfPODesc_system_origin"/>
+                    </DMSSSCPO-ORD-SOURCE-CD>
+                    <DMSSSCPO-INSTORE-DATE>
+                        <xsl:value-of select="concat(tib:tokenize(substring($Start/group/pfx2:Records/pfx2:Record[1]/ExtOfPODtl_ibd_isd_dt, 1, 10), &quot;/&quot;)[3],&#xA;tib:tokenize(substring($Start/group/pfx2:Records/pfx2:Record[1]/ExtOfPODtl_ibd_isd_dt, 1, 10), &quot;/&quot;)[1],&#xA;tib:tokenize(substring($Start/group/pfx2:Records/pfx2:Record[1]/ExtOfPODtl_ibd_isd_dt, 1, 10), &quot;/&quot;)[2])"/>
+                    </DMSSSCPO-INSTORE-DATE>
+                    <xsl:if test="exists($Start/group/pfx2:Records/pfx2:Record[1]/ExtOfPODtl_di_item_count)">
+                        <xsl:if test="$Start/group/pfx2:Records/pfx2:Record[1]/ExtOfPODtl_di_item_count">
+                            <DMSSSCPO-ITEM-COUNT>
+                                <xsl:value-of select="$Start/group/pfx2:Records/pfx2:Record[1]/ExtOfPODtl_di_item_count"/>
+                            </DMSSSCPO-ITEM-COUNT>
+                        </xsl:if>
+                    </xsl:if>
+                    <DMSSSCPO-ACTION-DTTM>
+                        <DMSSSCPO-ACTION-DT>
+                            <xsl:value-of select="tib:format-date(&quot;yyyyMMdd&quot;, current-date())"/>
+                        </DMSSSCPO-ACTION-DT>
+                        <DMSSSCPO-ACTION-TM>
+                            <xsl:value-of select="tib:format-time(&quot;HHmmss&quot;, substring-after(current-dateTime(), &quot;T&quot;))"/>
+                        </DMSSSCPO-ACTION-TM>
+                    </DMSSSCPO-ACTION-DTTM>
+                </DMSSSCPO-ORDER-HEADER>
+            </Input>
+        </pd:inputBindings>
+    </pd:activity>
+    <pd:activity name="Distinct Legacy PO">
+        <pd:type>com.tibco.pe.core.AssignActivity</pd:type>
+        <pd:resourceType>ae.activities.assignActivity</pd:resourceType>
+        <pd:x>195</pd:x>
+        <pd:y>374</pd:y>
+        <config>
+            <variableName>Var</variableName>
+        </config>
+        <pd:inputBindings>
+            <root>
+                <xsl:for-each-group select="$Start/group/pfx2:Records/pfx2:Record" group-by="ExtOfPODtl_legacy_po_no">
+                    <xsl:if test="ExtOfPODtl_legacy_po_no">
+                        <legacy_po_no>
+                            <xsl:value-of select="ExtOfPODtl_legacy_po_no"/>
+                        </legacy_po_no>
+                    </xsl:if>
+                </xsl:for-each-group>
+            </root>
+        </pd:inputBindings>
+    </pd:activity>
+    <pd:group name="Order">
+        <pd:type>com.tibco.pe.core.LoopGroup</pd:type>
+        <pd:resourceType>ae.process.group</pd:resourceType>
+        <pd:x>300</pd:x>
+        <pd:y>291</pd:y>
+        <pd:width>382</pd:width>
+        <pd:height>157</pd:height>
+        <pd:collapsedWidth>57</pd:collapsedWidth>
+        <pd:collapsedHeight>70</pd:collapsedHeight>
+        <pd:groupVariables/>
+        <pd:joinToggle>inherit</pd:joinToggle>
+        <config>
+            <pd:groupType>inputLoop</pd:groupType>
+            <pd:serializable>false</pd:serializable>
+            <pd:over>$Var/root/legacy_po_no</pd:over>
+            <pd:iterationElementSlot>idx</pd:iterationElementSlot>
+            <pd:indexSlot>i</pd:indexSlot>
+            <pd:outSlot>AccOrderStr</pd:outSlot>
+            <pd:activityOutputName>Map Order</pd:activityOutputName>
+            <pd:accumulateOutput>true</pd:accumulateOutput>
+        </config>
+        <pd:inputBindings/>
+        <pd:expanded>true</pd:expanded>
+        <pd:transition>
+            <pd:from>start</pd:from>
+            <pd:to>Render Order Header DTLMod</pd:to>
+            <pd:lineType>Default</pd:lineType>
+            <pd:lineColor>-16777216</pd:lineColor>
+            <pd:conditionType>always</pd:conditionType>
+        </pd:transition>
+        <pd:transition>
+            <pd:from>Map Order</pd:from>
+            <pd:to>end</pd:to>
+            <pd:lineType>Default</pd:lineType>
+            <pd:lineColor>-16777216</pd:lineColor>
+            <pd:conditionType>always</pd:conditionType>
+        </pd:transition>
+        <pd:transition>
+            <pd:from>Render Order Detail</pd:from>
+            <pd:to>Map Order</pd:to>
+            <pd:lineType>Default</pd:lineType>
+            <pd:lineColor>-16777216</pd:lineColor>
+            <pd:conditionType>always</pd:conditionType>
+        </pd:transition>
+        <pd:transition>
+            <pd:from>Render Order Header DTLMod</pd:from>
+            <pd:to>Render Order Detail</pd:to>
+            <pd:lineType>Default</pd:lineType>
+            <pd:lineColor>-16777216</pd:lineColor>
+            <pd:conditionType>always</pd:conditionType>
+        </pd:transition>
+        <pd:activity name="Render Order Detail">
+            <pd:type>com.tibco.plugin.cobol.CCBRenderActivity</pd:type>
+            <pd:resourceType>ae.activities.CCBRenderActivity</pd:resourceType>
+            <pd:description>Only Order Detail Records</pd:description>
+            <pd:x>486</pd:x>
+            <pd:y>383</pd:y>
+            <config>
+                <encoding>ASCII</encoding>
+                <encodingDisp1>ASCII</encodingDisp1>
+                <bigEndian>true</bigEndian>
+                <multipleRecords>true</multipleRecords>
+                <delimiter>New Line</delimiter>
+                <fillerChars>Space</fillerChars>
+                <truncate>true</truncate>
+                <renderAs>string</renderAs>
+                <ae.palette.cobolpalette.sharedProperties.copybook>/SharedResources/Copybook/SSCH/DMSSSCPO-DETAIL.cpy</ae.palette.cobolpalette.sharedProperties.copybook>
+            </config>
+            <pd:inputBindings>
+                <Input>
+                    <xsl:for-each select="$Start/group/pfx2:Records/pfx2:Record[ExtOfPODtl_legacy_po_no=$idx/legacy_po_no]">
+                        <DMSSSCPO-ORDER-DETAIL>
+                            <xsl:choose>
+                                <xsl:when test="ExtOfPODtl_di_status = 'X' | 'I' | 'R' | 'U'">
+                                    <DMSSSCPO-ITEM-RECORD-TYPE>
+                                        <xsl:value-of select="&quot;032&quot;"/>
+                                    </DMSSSCPO-ITEM-RECORD-TYPE>
+                                </xsl:when>
+                                <xsl:otherwise>
+                                    <DMSSSCPO-ITEM-RECORD-TYPE>
+                                        <xsl:value-of select="&quot;031&quot;"/>
+                                    </DMSSSCPO-ITEM-RECORD-TYPE>
+                                </xsl:otherwise>
+                            </xsl:choose>
+                            <DMSSSCPO-ITEM-ALLOC-NBR>
+                                <xsl:value-of select="ExtOfPODtl_legacy_po_no"/>
+                            </DMSSSCPO-ITEM-ALLOC-NBR>
+                            <DMSSSCPO-ITEM-NBR-DTL>
+                                <xsl:if test="exists(PODtl_physical_location)">
+                                    <DMSSSCPO-ITEM-SSC-UNIT-NBR>
+                                        <xsl:value-of select="PODtl_physical_location"/>
+                                    </DMSSSCPO-ITEM-SSC-UNIT-NBR>
+                                </xsl:if>
+                                <xsl:if test="string-length(substring(ExtOfPODtl_legacy_sku, 1, 3)) > 0">
+                                    <DMSSSCPO-ITEM-SUBDIVISION>
+                                        <xsl:value-of select="substring(ExtOfPODtl_legacy_sku, 1, 3)"/>
+                                    </DMSSSCPO-ITEM-SUBDIVISION>
+                                </xsl:if>
+                                <xsl:if test="string-length(substring(ExtOfPODtl_legacy_sku, 4, 4)) > 0">
+                                    <DMSSSCPO-ITEM-LOT>
+                                        <xsl:value-of select="substring(ExtOfPODtl_legacy_sku, 4, 4)"/>
+                                    </DMSSSCPO-ITEM-LOT>
+                                </xsl:if>
+                                <xsl:if test="string-length(substring(ExtOfPODtl_legacy_sku, 8, 4)) > 0">
+                                    <DMSSSCPO-ITEM-LINE>
+                                        <xsl:value-of select="substring(ExtOfPODtl_legacy_sku, 8, 4)"/>
+                                    </DMSSSCPO-ITEM-LINE>
+                                </xsl:if>
+                                <xsl:if test="string-length(substring(ExtOfPODtl_legacy_sku, 12, 3)) > 0">
+                                    <DMSSSCPO-ITEM-SKU>
+                                        <xsl:value-of select="substring(ExtOfPODtl_legacy_sku, 12, 3)"/>
+                                    </DMSSSCPO-ITEM-SKU>
+                                </xsl:if>
+                            </DMSSSCPO-ITEM-NBR-DTL>
+                            <xsl:if test="exists(POVirtualDtl_qty_ordered)">
+                                <DMSSSCPO-UNITS>
+                                    <xsl:value-of select="POVirtualDtl_qty_ordered*1000&#xA;{--if input is 16.4 then the output would be 000016400--}"/>
+                                </DMSSSCPO-UNITS>
+                            </xsl:if>
+                            <DMSSSCPO-ITEM-STORE-NBR>
+                                <xsl:value-of select="PODtl_physical_location"/>
+                            </DMSSSCPO-ITEM-STORE-NBR>
+                            <DMSSSCPO-ITEM-BULK-NBR>
+                                <xsl:value-of select="ExtOfPODtl_legacy_po_no"/>
+                            </DMSSSCPO-ITEM-BULK-NBR>
+                            <DMSSSCPO-ITEM-SUPPLIER-NBR>
+                                <xsl:value-of select="ExtOfPODesc_parent_supplier"/>
+                            </DMSSSCPO-ITEM-SUPPLIER-NBR>
+                            <DMSSSCPO-ITEM-7DGT-LOT-NBR>
+                                <xsl:value-of select="substring(ExtOfPODtl_legacy_sku, 1, 7)"/>
+                            </DMSSSCPO-ITEM-7DGT-LOT-NBR>
+                            <DMSSSCPO-ITEM-RTV-CD>
+                                <xsl:value-of select="&quot;N&quot;"/>
+                            </DMSSSCPO-ITEM-RTV-CD>
+                            <DMSSSCPO-DIST-TYPE>
+                                <xsl:value-of select="ExtOfPODtl_hanger_type"/>
+                            </DMSSSCPO-DIST-TYPE>
+                            <xsl:choose>
+                                <xsl:when test="ExtOfPODesc_packing_ind = 'PK' | 'OG'">
+                                    <DMSSSCPO-EXT-PACK-SIZE>
+                                        <xsl:value-of select="ExtOfPOPackDtl_comp_qty"/>
+                                    </DMSSSCPO-EXT-PACK-SIZE>
+                                </xsl:when>
+                                <xsl:otherwise>
+                                    <DMSSSCPO-EXT-PACK-SIZE>
+                                        <xsl:value-of select="1"/>
+                                    </DMSSSCPO-EXT-PACK-SIZE>
+                                </xsl:otherwise>
+                            </xsl:choose>
+                            <xsl:if test="exists(PODtl_supp_pack_size)">
+                                <DMSSSCPO-MCQ>
+                                    <xsl:value-of select="round(PODtl_supp_pack_size)"/>
+                                </DMSSSCPO-MCQ>
+                            </xsl:if>
+                        </DMSSSCPO-ORDER-DETAIL>
+                    </xsl:for-each>
+                </Input>
+            </pd:inputBindings>
+        </pd:activity>
+        <pd:activity name="Render Order Header DTLMod">
+            <pd:type>com.tibco.plugin.cobol.CCBRenderActivity</pd:type>
+            <pd:resourceType>ae.activities.CCBRenderActivity</pd:resourceType>
+            <pd:description>Only Order Header Records</pd:description>
+            <pd:x>379</pd:x>
+            <pd:y>382</pd:y>
+            <config>
+                <encoding>ASCII</encoding>
+                <encodingDisp1>ASCII</encodingDisp1>
+                <bigEndian>true</bigEndian>
+                <multipleRecords>true</multipleRecords>
+                <delimiter>New Line</delimiter>
+                <fillerChars>Space</fillerChars>
+                <truncate>true</truncate>
+                <renderAs>string</renderAs>
+                <ae.palette.cobolpalette.sharedProperties.copybook>/SharedResources/Copybook/SSCH/DMSSSCPO-HEADER.cpy</ae.palette.cobolpalette.sharedProperties.copybook>
+            </config>
+            <pd:inputBindings>
+                <Input>
+                    <DMSSSCPO-ORDER-HEADER>
+                        <DMSSSCPO-ORDER-RECORD-TYPE>
+                            <xsl:value-of select="&quot;030&quot;"/>
+                        </DMSSSCPO-ORDER-RECORD-TYPE>
+                        <DMSSSCPO-ACTION-TYPE>
+                            <xsl:value-of select="&quot;C&quot;"/>
+                        </DMSSSCPO-ACTION-TYPE>
+                        <DMSSSCPO-ALLOC-NBR>
+                            <xsl:value-of select="$Start/group/pfx2:Records/pfx2:Record[ExtOfPODtl_legacy_po_no=$idx/legacy_po_no]/ExtOfPODtl_legacy_po_no"/>
+                        </DMSSSCPO-ALLOC-NBR>
+                        <DMSSSCPO-STORE-NBR>
+                            <xsl:value-of select="$Start/group/pfx2:Records/pfx2:Record[ExtOfPODtl_legacy_po_no=$idx/legacy_po_no]/POVirtualDtl_location"/>
+                        </DMSSSCPO-STORE-NBR>
+                        <DMSSSCPO-TYPE-CODE>
+                            <xsl:value-of select="$Start/group/pfx2:Records/pfx2:Record[ExtOfPODtl_legacy_po_no=$idx/legacy_po_no]/ExtOfPODesc_shipping_ind"/>
+                        </DMSSSCPO-TYPE-CODE>
+                        <DMSSSCPO-BULK-NBR>
+                            <xsl:value-of select="$Start/group/pfx2:Records/pfx2:Record[ExtOfPODtl_legacy_po_no=$idx/legacy_po_no]/ExtOfPODtl_legacy_po_no"/>
+                        </DMSSSCPO-BULK-NBR>
+                        <xsl:if test="$Start/group/pfx2:Records/pfx2:Record[ExtOfPODtl_legacy_po_no=$idx/legacy_po_no]/ExtOfPODesc_parent_supplier">
+                            <DMSSSCPO-SUPPLIER-NBR>
+                                <xsl:value-of select="$Start/group/pfx2:Records/pfx2:Record[ExtOfPODtl_legacy_po_no=$idx/legacy_po_no]/ExtOfPODesc_parent_supplier"/>
+                            </DMSSSCPO-SUPPLIER-NBR>
+                        </xsl:if>
+                        <DMSSSCPO-ORDER-DATE>
+                            <xsl:value-of select="concat(tib:tokenize(substring($Start/group/pfx2:Records/pfx2:Record[ExtOfPODtl_legacy_po_no=$idx/legacy_po_no]/ExtOfPODesc_approved_date, 1, 10), &quot;/&quot;)[3],&#xA;tib:tokenize(substring($Start/group/pfx2:Records/pfx2:Record[ExtOfPODtl_legacy_po_no=$idx/legacy_po_no]/ExtOfPODesc_approved_date, 1, 10), &quot;/&quot;)[1],&#xA;tib:tokenize(substring($Start/group/pfx2:Records/pfx2:Record[ExtOfPODtl_legacy_po_no=$idx/legacy_po_no]/ExtOfPODesc_approved_date, 1, 10), &quot;/&quot;)[2])"/>
+                        </DMSSSCPO-ORDER-DATE>
+                        <DMSSSCPO-SHIP-DATE>
+                            <xsl:value-of select="concat(tib:tokenize(substring($Start/group/pfx2:Records/pfx2:Record[ExtOfPODtl_legacy_po_no=$idx/legacy_po_no]/ExtOfPODtl_ship_dcd_dt, 1, 10), &quot;/&quot;)[3],&#xA;tib:tokenize(substring($Start/group/pfx2:Records/pfx2:Record[ExtOfPODtl_legacy_po_no=$idx/legacy_po_no]/ExtOfPODtl_ship_dcd_dt, 1, 10), &quot;/&quot;)[1],&#xA;tib:tokenize(substring($Start/group/pfx2:Records/pfx2:Record[ExtOfPODtl_legacy_po_no=$idx/legacy_po_no]/ExtOfPODtl_ship_dcd_dt, 1, 10), &quot;/&quot;)[2])"/>
+                        </DMSSSCPO-SHIP-DATE>
+                        <DMSSSCPO-CANCEL-DATE>
+                            <xsl:value-of select="concat(tib:tokenize(substring($Start/group/pfx2:Records/pfx2:Record[ExtOfPODtl_legacy_po_no=$idx/legacy_po_no]/ExtOfPODtl_cancel_eta_dt, 1, 10), &quot;/&quot;)[3],&#xA;tib:tokenize(substring($Start/group/pfx2:Records/pfx2:Record[ExtOfPODtl_legacy_po_no=$idx/legacy_po_no]/ExtOfPODtl_cancel_eta_dt, 1, 10), &quot;/&quot;)[1],&#xA;tib:tokenize(substring($Start/group/pfx2:Records/pfx2:Record[ExtOfPODtl_legacy_po_no=$idx/legacy_po_no]/ExtOfPODtl_cancel_eta_dt, 1, 10), &quot;/&quot;)[2])"/>
+                        </DMSSSCPO-CANCEL-DATE>
+                        <DMSSSCPO-SSC-UNIT-SUB>
+                            <DMSSSCPO-SSC-UNIT-NBR>
+                                <xsl:value-of select="$Start/group/pfx2:Records/pfx2:Record[ExtOfPODtl_legacy_po_no=$idx/legacy_po_no]/PODtl_physical_location"/>
+                            </DMSSSCPO-SSC-UNIT-NBR>
+                            <DMSSSCPO-RPTG-SUB>
+                                <xsl:value-of select="$Start/group/pfx2:Records/pfx2:Record[ExtOfPODtl_legacy_po_no=$idx/legacy_po_no]/PODesc_dept"/>
+                            </DMSSSCPO-RPTG-SUB>
+                        </DMSSSCPO-SSC-UNIT-SUB>
+                        <DMSSSCPO-SOURCE-CODE>
+                            <xsl:value-of select="&quot;RMS&quot;"/>
+                        </DMSSSCPO-SOURCE-CODE>
+                        <DMSSSCPO-SUPPLIER-NAME>
+                            <xsl:value-of select="$Start/group/pfx2:Records/pfx2:Record[ExtOfPODtl_legacy_po_no=$idx/legacy_po_no]/ExtOfPODesc_parent_supplier_desc"/>
+                        </DMSSSCPO-SUPPLIER-NAME>
+                        <DMSSSCPO-ORD-SOURCE-CD>
+                            <xsl:value-of select="$Start/group/pfx2:Records/pfx2:Record[ExtOfPODtl_legacy_po_no=$idx/legacy_po_no]/ExtOfPODesc_system_origin"/>
+                        </DMSSSCPO-ORD-SOURCE-CD>
+                        <DMSSSCPO-INSTORE-DATE>
+                            <xsl:value-of select="concat(tib:tokenize(substring($Start/group/pfx2:Records/pfx2:Record[ExtOfPODtl_legacy_po_no=$idx/legacy_po_no]/ExtOfPODtl_ibd_isd_dt, 1, 10), &quot;/&quot;)[3],&#xA;tib:tokenize(substring($Start/group/pfx2:Records/pfx2:Record[ExtOfPODtl_legacy_po_no=$idx/legacy_po_no]/ExtOfPODtl_ibd_isd_dt, 1, 10), &quot;/&quot;)[1],&#xA;tib:tokenize(substring($Start/group/pfx2:Records/pfx2:Record[ExtOfPODtl_legacy_po_no=$idx/legacy_po_no]/ExtOfPODtl_ibd_isd_dt, 1, 10), &quot;/&quot;)[2])"/>
+                        </DMSSSCPO-INSTORE-DATE>
+                        <xsl:if test="exists($Start/group/pfx2:Records/pfx2:Record[ExtOfPODtl_legacy_po_no=$idx/legacy_po_no]/ExtOfPODtl_di_item_count)">
+                            <xsl:if test="$Start/group/pfx2:Records/pfx2:Record[ExtOfPODtl_legacy_po_no=$idx/legacy_po_no]/ExtOfPODtl_di_item_count">
+                                <DMSSSCPO-ITEM-COUNT>
+                                    <xsl:value-of select="$Start/group/pfx2:Records/pfx2:Record[ExtOfPODtl_legacy_po_no=$idx/legacy_po_no]/ExtOfPODtl_di_item_count"/>
+                                </DMSSSCPO-ITEM-COUNT>
+                            </xsl:if>
+                        </xsl:if>
+                        <DMSSSCPO-ACTION-DTTM>
+                            <DMSSSCPO-ACTION-DT>
+                                <xsl:value-of select="tib:format-date(&quot;yyyyMMdd&quot;, current-date())"/>
+                            </DMSSSCPO-ACTION-DT>
+                            <DMSSSCPO-ACTION-TM>
+                                <xsl:value-of select="tib:format-time(&quot;HHmmss&quot;, substring-after(current-dateTime(), &quot;T&quot;))"/>
+                            </DMSSSCPO-ACTION-TM>
+                        </DMSSSCPO-ACTION-DTTM>
+                    </DMSSSCPO-ORDER-HEADER>
+                </Input>
+            </pd:inputBindings>
+        </pd:activity>
+        <pd:activity name="Map Order">
+            <pd:type>com.tibco.plugin.mapper.MapperActivity</pd:type>
+            <pd:resourceType>ae.activities.MapperActivity</pd:resourceType>
+            <pd:x>605</pd:x>
+            <pd:y>373</pd:y>
+            <config>
+                <element>
+                    <xsd:element name="root">
+                        <xsd:complexType>
+                            <xsd:sequence>
+                                <xsd:element name="OrderStr" type="xsd:string" minOccurs="0" maxOccurs="unbounded"/>
+                            </xsd:sequence>
+                        </xsd:complexType>
+                    </xsd:element>
+                </element>
+            </config>
+            <pd:inputBindings>
+                <root>
+                    <OrderStr>
+                        <xsl:value-of select="concat($Render-Order-Header-DTLMod/Output/dataString, $Render-Order-Detail/Output/dataString)"/>
+                    </OrderStr>
+                </root>
+            </pd:inputBindings>
+        </pd:activity>
+    </pd:group>
+    <pd:activity name="SSCHOutput">
+        <pd:type>com.tibco.pe.core.CallProcessActivity</pd:type>
+        <pd:resourceType>ae.process.subprocess</pd:resourceType>
+        <pd:x>494</pd:x>
+        <pd:y>217</pd:y>
+        <config>
+            <processName>/Processes/SubProcesses/SSCH/SSCHOutput.process</processName>
+        </config>
+        <pd:inputBindings>
+            <root>
+                <xsl:choose>
+                    <xsl:when test="$Start/group/Message_Type = &quot;POHdrMod&quot;">
+                        <OrderStr>
+                            <xsl:value-of select="$Render-Order-Header-HdrMod/Output/dataString"/>
+                        </OrderStr>
+                    </xsl:when>
+                    <xsl:otherwise>
+                        <OrderStr>
+                            <xsl:value-of select="tib:concat-sequence($AccOrderStr/AccumulatedOutput/root/OrderStr)"/>
+                        </OrderStr>
+                    </xsl:otherwise>
+                </xsl:choose>
+                <FileName>
+                    <xsl:value-of select="$_globalVariables/ns2:GlobalVariables/PurchaseOrder/SSCHModOutputFileName"/>
+                </FileName>
+            </root>
+        </pd:inputBindings>
+    </pd:activity>
+    <pd:activity name="CatchFileIOException">
+        <pd:type>com.tibco.pe.core.CatchActivity</pd:type>
+        <pd:resourceType>ae.activities.catch</pd:resourceType>
+        <pd:x>213</pd:x>
+        <pd:y>38</pd:y>
+        <pd:handler>true</pd:handler>
+        <config>
+            <fault>localname=FileIOException namespace=http://schemas.tibco.com/bw/plugins/file/5.0/fileExceptions</fault>
+        </config>
+        <pd:inputBindings/>
+    </pd:activity>
+    <pd:activity name="Sleep">
+        <pd:type>com.tibco.plugin.timer.SleepActivity</pd:type>
+        <pd:resourceType>ae.activities.sleep</pd:resourceType>
+        <pd:x>370</pd:x>
+        <pd:y>93</pd:y>
+        <config/>
+        <pd:inputBindings>
+            <ns12:SleepInputSchema>
+                <IntervalInMillisec>
+                    <xsl:value-of select="$_globalVariables/ns2:GlobalVariables/PurchaseOrder/RetryFileWriteInterval"/>
+                </IntervalInMillisec>
+            </ns12:SleepInputSchema>
+        </pd:inputBindings>
+    </pd:activity>
+    <pd:activity name="Retry Append To File">
+        <pd:type>com.tibco.plugin.file.FileWriteActivity</pd:type>
+        <pd:resourceType>ae.activities.FileWriteActivity</pd:resourceType>
+        <pd:x>639</pd:x>
+        <pd:y>100</pd:y>
+        <config>
+            <encoding>text</encoding>
+            <compressFile>None</compressFile>
+            <createMissingDirectories>true</createMissingDirectories>
+            <append>true</append>
+        </config>
+        <pd:inputBindings>
+            <ns1:WriteActivityInputTextClass>
+                <fileName>
+                    <xsl:value-of select="$_globalVariables/ns2:GlobalVariables/PurchaseOrder/SSCHModOutputFileName"/>
+                </fileName>
+                <textContent>
+                    <xsl:value-of select="$RetrySSCHOutput/root/SSCHString"/>
+                </textContent>
+            </ns1:WriteActivityInputTextClass>
+        </pd:inputBindings>
+    </pd:activity>
+    <pd:activity name="RetrySSCHOutput">
+        <pd:type>com.tibco.pe.core.CallProcessActivity</pd:type>
+        <pd:resourceType>ae.process.subprocess</pd:resourceType>
+        <pd:x>494</pd:x>
+        <pd:y>93</pd:y>
+        <config>
+            <processName>/Processes/SubProcesses/SSCH/SSCHOutput.process</processName>
+        </config>
+        <pd:inputBindings>
+            <root>
+                <xsl:choose xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
+                    <xsl:when test="$Start/group/Message_Type = &quot;POHdrMod&quot;">
+                        <OrderStr>
+                            <xsl:value-of select="$Render-Order-Header-HdrMod/Output/dataString"/>
+                        </OrderStr>
+                    </xsl:when>
+                    <xsl:otherwise>
+                        <OrderStr>
+                            <xsl:value-of select="tib:concat-sequence($AccOrderStr/AccumulatedOutput/root/OrderStr)"/>
+                        </OrderStr>
+                    </xsl:otherwise>
+                </xsl:choose>
+                <FileName>
+                    <xsl:value-of select="$_globalVariables/ns2:GlobalVariables/PurchaseOrder/SSCHModOutputFileName"/>
+                </FileName>
+            </root>
+        </pd:inputBindings>
+    </pd:activity>
+    <pd:activity name="CatchFileNotFoundException">
+        <pd:type>com.tibco.pe.core.CatchActivity</pd:type>
+        <pd:resourceType>ae.activities.catch</pd:resourceType>
+        <pd:x>211</pd:x>
+        <pd:y>136</pd:y>
+        <pd:handler>true</pd:handler>
+        <config>
+            <fault>localname=FileNotFoundException namespace=http://schemas.tibco.com/bw/plugins/file/5.0/fileExceptions</fault>
+        </config>
+        <pd:inputBindings/>
+    </pd:activity>
+    <pd:transition>
+        <pd:from>Append To File</pd:from>
+        <pd:to>End</pd:to>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>always</pd:conditionType>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>Start</pd:from>
+        <pd:to>Render Order Header HdrMod</pd:to>
+        <pd:xpathDescription>POHdrMod</pd:xpathDescription>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>xpath</pd:conditionType>
+        <pd:xpath>$Start/group/Message_Type = "POHdrMod"</pd:xpath>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>Render Order Header HdrMod</pd:from>
+        <pd:to>SSCHOutput</pd:to>
+        <pd:xpathDescription/>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>always</pd:conditionType>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>Start</pd:from>
+        <pd:to>Distinct Legacy PO</pd:to>
+        <pd:xpathDescription>PODTLMod</pd:xpathDescription>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>otherwise</pd:conditionType>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>Distinct Legacy PO</pd:from>
+        <pd:to>Order</pd:to>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>always</pd:conditionType>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>Order</pd:from>
+        <pd:to>SSCHOutput</pd:to>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>always</pd:conditionType>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>SSCHOutput</pd:from>
+        <pd:to>Append To File</pd:to>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>always</pd:conditionType>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>CatchFileIOException</pd:from>
+        <pd:to>Sleep</pd:to>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-65536</pd:lineColor>
+        <pd:conditionType>always</pd:conditionType>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>Sleep</pd:from>
+        <pd:to>RetrySSCHOutput</pd:to>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>always</pd:conditionType>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>RetrySSCHOutput</pd:from>
+        <pd:to>Retry Append To File</pd:to>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>always</pd:conditionType>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>Retry Append To File</pd:from>
+        <pd:to>End</pd:to>
+        <pd:lineType>One Bend</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>always</pd:conditionType>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>CatchFileNotFoundException</pd:from>
+        <pd:to>Sleep</pd:to>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-65536</pd:lineColor>
+        <pd:conditionType>always</pd:conditionType>
+    </pd:transition>
+</pd:ProcessDefinition>

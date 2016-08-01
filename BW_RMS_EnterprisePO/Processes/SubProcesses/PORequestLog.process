@@ -1,0 +1,146 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<pd:ProcessDefinition xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:pd="http://xmlns.tibco.com/bw/process/2003" xmlns:ns="http://www.tibco.com/pe/EngineTypes" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:ns2="http://www.tibco.com/pe/DeployedVarsType" xmlns:ns1="http://schemas.tibco.com/bw/plugins/jdbc/5.0/jdbcExceptions" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+    <pd:name>Processes/SubProcesses/PORequestLog.process</pd:name>
+    <pd:startName>Start</pd:startName>
+    <pd:startType>
+        <xsd:element name="root">
+            <xsd:complexType>
+                <xsd:sequence>
+                    <xsd:element name="Request_Type" type="xsd:string" minOccurs="0"/>
+                    <xsd:element name="Business_ID" type="xsd:string"/>
+                    <xsd:element name="INPUT_REQUEST" type="xsd:string" minOccurs="0"/>
+                </xsd:sequence>
+            </xsd:complexType>
+        </xsd:element>
+    </pd:startType>
+    <pd:startX>125</pd:startX>
+    <pd:startY>76</pd:startY>
+    <pd:returnBindings/>
+    <pd:endName>End</pd:endName>
+    <pd:endX>478</pd:endX>
+    <pd:endY>78</pd:endY>
+    <pd:errorSchemas/>
+    <pd:processVariables/>
+    <pd:targetNamespace>http://xmlns.example.com/1465393298221</pd:targetNamespace>
+    <pd:activity name="Log Request">
+        <pd:type>com.tibco.plugin.jdbc.JDBCUpdateActivity</pd:type>
+        <pd:resourceType>ae.activities.JDBCUpdateActivity</pd:resourceType>
+        <pd:x>300</pd:x>
+        <pd:y>77</pd:y>
+        <config>
+            <timeout>%%Connections/Database/RMS/DBTimeOut%%</timeout>
+            <commit>false</commit>
+            <emptyStrAsNil>true</emptyStrAsNil>
+            <statement>INSERT INTO JCP_INTG_LOGGING (
+   JCP_INTG_LOGGING_SEQ, MESSAGE_TYPE, BUSINESS_ID, INPUT_REQUEST,
+   CREATE_DATETIME, CREATE_ID) 
+VALUES (JCP_INTG_LOGGING_SEQ.nextval,?,?,?,sysdate,?)</statement>
+            <jdbcSharedConfig>/Configurations/Connections/Database/RMS.sharedjdbc</jdbcSharedConfig>
+            <Prepared_Param_DataType>
+                <parameter>
+                    <parameterName>MESSAGE_TYPE</parameterName>
+                    <dataType>VARCHAR</dataType>
+                </parameter>
+                <parameter>
+                    <parameterName>BUSINESS_ID</parameterName>
+                    <dataType>VARCHAR</dataType>
+                </parameter>
+                <parameter>
+                    <parameterName>INPUT_REQUEST</parameterName>
+                    <dataType>CLOB</dataType>
+                </parameter>
+                <parameter>
+                    <parameterName>CREATE_ID</parameterName>
+                    <dataType>VARCHAR</dataType>
+                </parameter>
+            </Prepared_Param_DataType>
+        </config>
+        <pd:inputBindings>
+            <jdbcUpdateActivityInput>
+                <MESSAGE_TYPE>
+                    <xsl:value-of select="$Start/root/Request_Type"/>
+                </MESSAGE_TYPE>
+                <BUSINESS_ID>
+                    <xsl:value-of select="$Start/root/Business_ID"/>
+                </BUSINESS_ID>
+                <INPUT_REQUEST>
+                    <xsl:choose>
+                        <xsl:when test="exists($Start/root/INPUT_REQUEST)">
+                            <xsl:value-of select="$Start/root/INPUT_REQUEST"/>
+                        </xsl:when>
+                        <xsl:otherwise>
+                            <xsl:attribute name="xsi:nil">true</xsl:attribute>
+                        </xsl:otherwise>
+                    </xsl:choose>
+                </INPUT_REQUEST>
+                <CREATE_ID>
+                    <xsl:value-of select="&quot;TIBCO&quot;"/>
+                </CREATE_ID>
+            </jdbcUpdateActivityInput>
+        </pd:inputBindings>
+    </pd:activity>
+    <pd:activity name="Catch">
+        <pd:type>com.tibco.pe.core.CatchActivity</pd:type>
+        <pd:resourceType>ae.activities.catch</pd:resourceType>
+        <pd:x>266</pd:x>
+        <pd:y>207</pd:y>
+        <pd:handler>true</pd:handler>
+        <config>
+            <fault>localname=JDBCConnectionNotFoundException namespace=http://schemas.tibco.com/bw/plugins/jdbc/5.0/jdbcExceptions</fault>
+        </config>
+        <pd:inputBindings/>
+    </pd:activity>
+    <pd:activity name="POErrorQueueLog">
+        <pd:type>com.tibco.pe.core.CallProcessActivity</pd:type>
+        <pd:resourceType>ae.process.subprocess</pd:resourceType>
+        <pd:x>478</pd:x>
+        <pd:y>207</pd:y>
+        <config>
+            <processName>/Processes/SubProcesses/POErrorQueueLog.process</processName>
+        </config>
+        <pd:inputBindings>
+            <root>
+                <Msg_Id>
+                    <xsl:value-of select="$Start/root/Business_ID"/>
+                </Msg_Id>
+                <Msg_Code>
+                    <xsl:value-of select="$Catch/ns1:JDBCConnectionNotFoundException/msgCode"/>
+                </Msg_Code>
+                <Message>
+                    <xsl:value-of select="$Catch/ns1:JDBCConnectionNotFoundException/msg"/>
+                </Message>
+                <QueueName>
+                    <xsl:value-of select="concat($_globalVariables/ns2:GlobalVariables/Connections/JMS/migAppDomain, &quot;.&quot;, $_globalVariables/ns2:GlobalVariables/Connections/JMS/POSSCHErrorQueueName)"/>
+                </QueueName>
+            </root>
+        </pd:inputBindings>
+    </pd:activity>
+    <pd:transition>
+        <pd:from>Catch</pd:from>
+        <pd:to>POErrorQueueLog</pd:to>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>always</pd:conditionType>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>POErrorQueueLog</pd:from>
+        <pd:to>End</pd:to>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>always</pd:conditionType>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>Start</pd:from>
+        <pd:to>Log Request</pd:to>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>always</pd:conditionType>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>Log Request</pd:from>
+        <pd:to>End</pd:to>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>always</pd:conditionType>
+    </pd:transition>
+</pd:ProcessDefinition>

@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<BWSharedResource>
+    <name>JMSConnection</name>
+    <resourceType>ae.shared.JMSConnectionKey</resourceType>
+    <description>dev=pouser/pouser
+trn=pouser/pouser1</description>
+    <config>
+        <NamingEnvironment>
+            <UseJNDI>true</UseJNDI>
+            <ProviderURL>%%Connections/JMS/JNDIContextURL%%</ProviderURL>
+            <NamingURL>%%Connections/JMS/JNDIContextURL%%</NamingURL>
+            <NamingInitialContextFactory>com.tibco.tibjms.naming.TibjmsInitialContextFactory</NamingInitialContextFactory>
+            <TopicFactoryName>%%Connections/JMS/TopicConnectionFactory%%</TopicFactoryName>
+            <QueueFactoryName>%%Connections/JMS/QueueConnectionFactory%%</QueueFactoryName>
+            <NamingPrincipal>%%Connections/JMS/JNDIUser%%</NamingPrincipal>
+            <NamingCredential>%%Connections/JMS/JNDIPassword%%</NamingCredential>
+        </NamingEnvironment>
+        <ConnectionAttributes>
+            <username>%%Connections/JMS/JNDIUser%%</username>
+            <password>%%Connections/JMS/JNDIPassword%%</password>
+            <clientID/>
+            <autoGenClientID>true</autoGenClientID>
+        </ConnectionAttributes>
+        <UseXACF>false</UseXACF>
+    </config>
+</BWSharedResource>

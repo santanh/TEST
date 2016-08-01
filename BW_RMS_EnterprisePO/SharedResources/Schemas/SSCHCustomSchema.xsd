@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema"
+	 xmlns="http://www.tibco.com/schemas/BW_RMS_PurchaseOrder/SharedResources/Schemas/Schema.xsd"
+	 targetNamespace="http://www.tibco.com/schemas/BW_RMS_PurchaseOrder/SharedResources/Schemas/Schema.xsd"
+	 elementFormDefault="unqualified"
+	 attributeFormDefault="unqualified">
+	<xs:element name="Record">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element name="PODesc_dept" type="xs:integer" minOccurs="0"/>
+				<xs:element name="ExtOfPODesc_approved_date" type="xs:string" minOccurs="0"/>
+				<xs:element name="ExtOfPODesc_packing_ind" type="xs:string" minOccurs="0"/>
+				<xs:element name="ExtOfPODesc_shipping_ind" type="xs:string" minOccurs="0"/>
+				<xs:element name="ExtOfPODesc_system_origin" type="xs:string" minOccurs="0"/>
+				<xs:element name="ExtOfPODesc_parent_supplier" type="xs:integer" minOccurs="0"/>
+				<xs:element name="ExtOfPODesc_parent_supplier_desc" type="xs:string" minOccurs="0"/>
+				<xs:element name="PODtl_physical_location" type="xs:integer" minOccurs="0"/>
+				<xs:element name="PODtl_supp_pack_size" type="xs:decimal" minOccurs="0"/>
+				<xs:element name="POVirtualDtl_location" type="xs:integer" minOccurs="0"/>
+				<xs:element name="POVirtualDtl_qty_ordered" type="xs:decimal" minOccurs="0"/>
+				<xs:element name="ExtOfPODtl_ship_dcd_dt" type="xs:dateTime" minOccurs="0"/>
+				<xs:element name="ExtOfPODtl_cancel_eta_dt" type="xs:dateTime" minOccurs="0"/>
+				<xs:element name="ExtOfPODtl_ibd_isd_dt" type="xs:dateTime" minOccurs="0"/>
+				<xs:element name="ExtOfPODtl_legacy_sku" type="xs:string" minOccurs="0"/>
+				<xs:element name="ExtOfPODtl_item_tolerance_qty" type="xs:integer" minOccurs="0"/>
+				<xs:element name="ExtOfPODtl_hanger_type" type="xs:string" minOccurs="0"/>
+				<xs:element name="ExtOfPODtl_legacy_po_no" type="xs:string" minOccurs="0"/>
+				<xs:element name="ExtOfPODtl_di_item_count" type="xs:integer" minOccurs="0"/>
+				<xs:element name="ExtOfPODtl_di_status" type="xs:string" minOccurs="0"/>
+				<xs:element name="ExtOfPOPackDtl_comp_qty" type="xs:integer" minOccurs="0"/>
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="Records">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element ref="Record" minOccurs="0" maxOccurs="unbounded"/>
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+</xs:schema>

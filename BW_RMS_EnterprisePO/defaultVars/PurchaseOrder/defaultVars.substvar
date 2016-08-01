@@ -1,0 +1,29 @@
+<?xml version = "1.0" encoding = "UTF-8"?>
+<repository xmlns:xsi = "http://www.w3.org/2001/XMLSchema-instance" xmlns = "http://www.tibco.com/xmlns/repo/types/2002">
+	<globalVariables>
+		<globalVariable>
+			<name>RetryFileWriteInterval</name>
+			<value>5000</value>
+			<deploymentSettable>true</deploymentSettable>
+			<serviceSettable>false</serviceSettable>
+			<type>Integer</type>
+			<modTime>1469431275280</modTime>
+		</globalVariable>
+		<globalVariable>
+			<name>SSCHCreOutputFileName</name>
+			<value>C:\repository\EventProcessing\PurchaseOrder\Files\SSCHCre.txt</value>
+			<deploymentSettable>true</deploymentSettable>
+			<serviceSettable>false</serviceSettable>
+			<type>String</type>
+			<modTime>1469081529496</modTime>
+		</globalVariable>
+		<globalVariable>
+			<name>SSCHModOutputFileName</name>
+			<value>C:\repository\EventProcessing\PurchaseOrder\Files\SSCHMod.txt</value>
+			<deploymentSettable>true</deploymentSettable>
+			<serviceSettable>false</serviceSettable>
+			<type>String</type>
+			<modTime>1469081529586</modTime>
+		</globalVariable>
+	</globalVariables>
+</repository>
